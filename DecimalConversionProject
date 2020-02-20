@@ -112,7 +112,7 @@ public class DecimalConverter
 		}
 			
 		//Output the inputDecimalInt then \n is binary, \n Octal, \n Hexadecimal
-		System.out.println(binaryResult + "\n" + octalResult + "\n" + hexadecimalResult); 
+		System.out.println(inputDecimalInt + "\n" + binaryResult + "\n" + octalResult + "\n" + hexadecimalResult); 
 	}
 
 }
