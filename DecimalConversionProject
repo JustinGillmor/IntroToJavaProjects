@@ -1,0 +1,118 @@
+import java.util.Scanner;
+/*  
+ * <DecimalConverter.java>  
+ * This program prompts the user for a decimal integer and as a result,  
+ * the program outputs the equivalent binary value, octal value and hexadecimal value.
+ * 
+ * Author: Justin Gillmor   
+ * Class: EECS 1510  
+ * Prof: Dr. Joseph Hobbs  
+ *  
+ */  
+public class DecimalConverter 
+{
+
+	public static void main(String[] args) 
+	{
+		//Initialize the scanner
+		Scanner input = new Scanner(System.in);
+	
+		//Initialize the variable for the original int (inputDecimalInt)
+		//Prompt the user for their integer of choice assign the value to inputDecimalInt 
+		int inputDecimalInt = input.nextInt();
+	
+		//Initialize the int conversion variables and strings for the result conversions (16 digits/bit)
+		//The results have to be a strings to concatenate the digits together (string 0 + 1 = 01,... while int 0 + 1 = 1)
+		int binaryRemainder = inputDecimalInt;
+		int octalRemainder = inputDecimalInt;
+		int hexadecimalRemainder = inputDecimalInt;
+		
+		String binaryResult = "";
+		String octalResult = "";
+		String hexadecimalResult = "";
+		
+		//Tests to see if the conversion factor can be ran through to gain another one or zero	
+		while (binaryRemainder > 0 )
+		{
+			//Checks to see if there is a remainder if divided by two, then assigns a 1 or a 0 depending on the result
+			//Will concatenate numbers together in the correct order until the conversion factor is zero
+			if (binaryRemainder % 2 == 1)
+			{
+				binaryResult = 1 + binaryResult;
+			}
+				else
+				{
+					binaryResult = 0 + binaryResult;
+				}
+				binaryRemainder = binaryRemainder / 2;
+		}
+					//Extends the length of the result to 16 bits
+				while (binaryResult.length() < 16)
+				{
+					binaryResult = 0 + binaryResult;
+				}
+				//Provide a similar method for octal and hexadecimal numbers
+				
+		//Octal Conversion Code
+		//Initializes a variable to hold the value that gets divided by 8 multiple times		
+		int octalDivisor = octalRemainder;		
+		
+		//While the divisor is above zero it will mod the int, concatenate the result of the remainder, 
+		// and find the remainder that is going to get divided by 8 next
+		while (octalDivisor > 0)
+		{
+			octalRemainder = octalDivisor % 8;
+			octalResult = octalRemainder + octalResult;
+			octalDivisor = octalDivisor / 8;
+		}
+		//Add additional placement zeros if the octal number doesn't fill 16 bits worth
+		while (octalResult.length() < 6)
+		{
+			octalResult = 0 + octalResult;
+		}
+			
+		//Hexadecimal Conversion Code (Same as the Octal Conversion but modulus of 16)
+		//Initialize a variable to hold the value that gets divided by 16 multiple times 
+		int hexDivisor = hexadecimalRemainder;
+	
+		while (hexDivisor > 0)
+		{
+			hexadecimalRemainder = hexDivisor % 16;
+			
+			//check to see if the remainder is over the value 9, hexadecimal places the ints 10-15 in the values A-F
+			if (hexadecimalRemainder > 9)
+			{
+				//initialize a string variable so that I can concatenate letters to the result instead of numbers
+				String hexaLetter = "";
+				//Create a switch case that evaluates all possible remainders under 16 and assigns a letter to the variable
+				switch(hexadecimalRemainder)
+				{
+					case 10: hexaLetter = "A"; break;
+					case 11: hexaLetter = "B"; break;
+					case 12: hexaLetter = "C"; break;
+					case 13: hexaLetter = "D"; break;
+					case 14: hexaLetter = "E"; break;
+					case 15: hexaLetter = "F"; break;
+				}
+				//This concatenates the letter to the result string and finds the new divisor
+				hexadecimalResult = hexaLetter + hexadecimalResult;
+				hexDivisor = hexDivisor / 16;
+			}
+			//While this concatenates the number that is already under the value of 9
+			else 
+			{
+				hexadecimalResult = hexadecimalRemainder + hexadecimalResult;
+				hexDivisor = hexDivisor / 16;
+			}
+		}
+		//Add additional placement zeros if the octal number doesn't fill 16 bits worth
+		while (hexadecimalResult.length() < 4)
+		{
+			hexadecimalResult = 0 + hexadecimalResult;
+		}
+			
+		//Output the inputDecimalInt then \n is binary, \n Octal, \n Hexadecimal
+		System.out.println(binaryResult + "\n" + octalResult + "\n" + hexadecimalResult); 
+	}
+
+}
