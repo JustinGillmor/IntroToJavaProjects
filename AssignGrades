@@ -1,0 +1,75 @@
+/*  
+ * <AssignGrades.java>  
+ * This Program prompts the user for the number of students and assigns them grades
+ * based on the best students score (curved grading scale) 
+ * Score difference less than 10 = A
+ * Score difference less than 20 = B
+ * Score difference less than 30 = C etc...
+ * 
+ * Author: Justin Gillmor   
+ * Class: EECS 1510  
+ * Prof: Dr. Joseph Hobbs  
+ *  
+ */  
+import java.util.Scanner;
+public class AssignGrades 
+{
+	public static void main(String[] args) 
+	{
+		//prompt for grades
+		Scanner input = new Scanner(System.in);
+		System.out.print("Enter the number of Students: ");
+		int numstu = input.nextInt();
+		
+		//Make an array with all of the inputs 
+		int[] ingrades = new int[numstu];
+		System.out.print("Enter " + numstu + " scores: ");
+			for(int i = 0; i < numstu; i++)
+			{
+				ingrades[i] = input.nextInt();
+			}
+			
+			//Pass the array to the method and find the best value
+			int best = bestGrade(ingrades);
+			
+			//Compare each score to the best score and assign their grade
+			for(int i = 0; i < numstu; i++)
+			{
+				if (ingrades[i] >= best - 10)
+				{
+					System.out.println("Student " + i + " score is " + ingrades[i] + " and grade is A");
+				}
+				else if (ingrades[i] >= best - 20)
+				{
+					System.out.println("Student " + i + " score is " + ingrades[i] + " and grade is B");
+				}
+				else if (ingrades[i] >= best - 30)
+				{
+					System.out.println("Student " + i + " score is " + ingrades[i] + " and grade is C");
+				}
+				else if (ingrades[i] >= best - 40)
+				{
+					System.out.println("Student " + i + " score is " + ingrades[i] + " and grade is D");
+				}
+				else
+				{
+					System.out.println("Student " + i + " score is " + ingrades[i] + " and grade is F");
+				}
+				
+			}
+	}
+		
+	//bestGrade method
+	public static int bestGrade(int[] input)
+	{
+		int best = input[0];
+		for(int i = 1; i < input.length; i++)
+		{
+			if (input[i] > best)
+			{
+				best = input[i];
+			}
+		}
+		return best;
+	}
+}
