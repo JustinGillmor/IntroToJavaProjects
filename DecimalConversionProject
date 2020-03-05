@@ -17,11 +17,12 @@ public class DecimalConverter
 		//Initialize the scanner
 		Scanner input = new Scanner(System.in);
 	
-		//Initialize the variable for the original int (inputDecimalInt)
+		//Initialize and declare the variable for the original integer  (inputDecimalInt)
 		//Prompt the user for their integer of choice assign the value to inputDecimalInt 
 		int inputDecimalInt = input.nextInt();
 	
-		//Initialize the int conversion variables and strings for the result conversions (16 digits/bit)
+		//Initialize and declare the int remainder variables (need them because we dont want to change the user input)
+		//Initialize and declare the strings for the result conversions (16 digits/bit)
 		//The results have to be a strings to concatenate the digits together (string 0 + 1 = 01,... while int 0 + 1 = 1)
 		int binaryRemainder = inputDecimalInt;
 		int octalRemainder = inputDecimalInt;
@@ -31,10 +32,10 @@ public class DecimalConverter
 		String octalResult = "";
 		String hexadecimalResult = "";
 		
-		//Tests to see if the conversion factor can be ran through to gain another one or zero	
+		//Tests to see if the remainder can be ran through to gain another one or zero
 		while (binaryRemainder > 0 )
 		{
-			//Checks to see if there is a remainder if divided by two, then assigns a 1 or a 0 depending on the result
+			//Checks to see if there is a remainder if it is divided by two, then assigns a 1 or a 0 depending on the result
 			//Will concatenate numbers together in the correct order until the conversion factor is zero
 			if (binaryRemainder % 2 == 1)
 			{
@@ -46,7 +47,7 @@ public class DecimalConverter
 				}
 				binaryRemainder = binaryRemainder / 2;
 		}
-					//Extends the length of the result to 16 bits
+				//Extends the length of the result to 16 bits
 				while (binaryResult.length() < 16)
 				{
 					binaryResult = 0 + binaryResult;
@@ -54,11 +55,11 @@ public class DecimalConverter
 				//Provide a similar method for octal and hexadecimal numbers
 				
 		//Octal Conversion Code
-		//Initializes a variable to hold the value that gets divided by 8 multiple times		
+		//Initializes and declares a variable to hold the value that gets divided by 8 multiple times		
 		int octalDivisor = octalRemainder;		
 		
 		//While the divisor is above zero it will mod the int, concatenate the result of the remainder, 
-		// and find the remainder that is going to get divided by 8 next
+		//and find the remainder that is going to get divided by 8 next
 		while (octalDivisor > 0)
 		{
 			octalRemainder = octalDivisor % 8;
