@@ -1,0 +1,167 @@
+import java.util.Scanner;
+public class ConnectFour 
+{
+	
+	//The Main method sets up the empty board and switches the turns for the player
+	//as the game is played the method checks for a full column and a winner for each turn
+	//after a winner is found the game exits and asks to play again
+	public static void main(String[] args) 
+	{
+		//The variable turns will be modulus by 2 each time to check which player's turn it is (there are only 2 player)
+		//initialize and assign all variables that will later get assigned the result of the boolean methods
+		//initialize and create the board that will be printed
+		Scanner input = new Scanner(System.in);
+		System.out.println("printing board:");
+		int turns = 1;
+		boolean colFull = false;
+		boolean winStatus = false;
+		boolean drawStatus = false;
+		char[][] board = new char[6][7];
+
+		//This do-while includes the entire turn system and continues until there is a Winner
+		do
+		{	
+			//The turns modulus of 2 finds which person is next
+			if(turns % 2 == 1)
+			{
+				//Yellows turn prompts for a column which gets checked for validity
+				int column = -1;
+				char color = 'Y';
+				while(column > 6 || column < 0)
+				{
+				System.out.println("Yellow's turn: ");
+				printBoard(board);
+				column = input.nextInt();
+					if(column > 6 || column < 0)
+					{
+						System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
+					}
+				}
+				//Checks to see if the column is full based on the board and the column input
+				colFull = columnIsFull(board, column);
+				if(colFull == true)
+					{
+						System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
+					}
+				//if it is a valid input the game will proceed to drop the disk	
+				else
+					{
+						dropDisk(board, column, color);
+						turns++;
+					}
+			}
+			
+			//Red's turn because the "turns" variable % 2 resulted in 0
+			//The red turn is uses all of the same code except for assigning the color variable to 'R'
+			else
+			{
+				int column = -1;
+				char color = 'R';
+				while(column > 6 || column < 0)
+				{
+				System.out.println("Red's turn: ");
+				printBoard(board);
+				column = input.nextInt();
+					if(column > 6 || column < 0)
+					{
+						System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
+					}
+				}
+				colFull = columnIsFull(board, column);
+				if(colFull == true)
+					{
+						System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
+					}
+					else
+					{
+						dropDisk(board, column, color);
+						turns++;
+					}				
+			}
+		
+		//After each turn check to see if there is a winner or draw and if there isn't the loop repeats
+		winStatus = isWinner(board);
+		drawStatus = isDraw(board);
+		}while((winStatus == false) && (drawStatus == false));
+	
+	
+	
+	
+	}
+	
+	//Method that displays the board
+	private static void printBoard(char[][] board)
+	{
+		for(int i = board.length - 1; i >= 0; i--)
+		{
+			System.out.print("| ");
+			for(int j = 0; j < board[i].length; j++)
+			{
+				System.out.print(board[i][j] + " | ");
+			}
+			System.out.println();
+		}
+	}
+	
+	//Method used to drop each disk
+	//This will check each row from bottom to top to see if the space is open or taken
+	//then it will assign the appropriate color to the spot the user has chose
+	//NOTE '\0' is equivalent to a blank space
+	public static void dropDisk(char[][] board, int column, char color)
+	{
+		if(board[0][column] == '\0')
+		{
+			board[0][column] = color;
+		}
+		else if(board[1][column] == '\0')
+		{
+			board[1][column] = color;
+		}
+		else if(board[2][column] == '\0')
+		{
+			board[2][column] = color;
+		}
+		else if(board[3][column] == '\0')
+		{
+			board[3][column] = color;
+		}
+		else if(board[4][column] == '\0')
+		{
+			board[4][column] = color;
+		}
+		else if(board[5][column] == '\0')
+		{
+			board[5][column] = color;
+		}
+	}
+	
+	//Method used to check to see if there is a winner on the board
+	public static boolean isWinner(char[][] board)
+	{
+	
+		return false;
+	
+	}
+	
+	//Method used to check to see if the column is full or not
+	//NOTE board[5][column] checks the very top of the column and if it is anything other then a blank space
+	//the column is declared as not full and returns false
+	public static boolean columnIsFull(char[][] board, int column)
+	{
+		if(board[5][column] != '\0')
+		{
+			return true;
+		}
+		{
+			return false;
+		}
+	}
+
+	//Method used to check to see if there is a draw
+	public static boolean isDraw(char[][] board)
+	{
+		return false;
+	}
+	
+
+}
