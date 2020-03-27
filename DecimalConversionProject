@@ -1,119 +1,314 @@
-import java.util.Scanner;
 /*  
- * <DecimalConverter.java>  
- * This program prompts the user for a decimal integer and as a result,  
- * the program outputs the equivalent binary value, octal value and hexadecimal value.
+ * <ConnectFour.java>  
+ * 
+ * Game Instructions:
+ * The program emulates the game called Connect Four and it is played on a 6 row x 7 column board.
+ * The game requires two players and before starting, the players will decide who will play first.
+ * The first player will be Yellow (indicated by the Y disk) and the second player will be Red (indicated by the R disk).
+ * To start the game, the yellow player will choose a column and a "disk" will drop down the column.
+ * !!NOTE!! (0 - 6 are the only valid inputs and column 0 is the first column from the left)
+ * Turns for each player will alternate after a disk has been dropped.
+ * In order to win the game, a player will have to get 4 of their disks in a row horizontally, vertically, or diagonally.
+ * After the game is over, you will be prompted to either play again or exit.
  * 
  * Author: Justin Gillmor   
  * Class: EECS 1510  
  * Prof: Dr. Joseph Hobbs  
  *  
  */  
-public class DecimalConverter 
-{
 
+import java.util.Scanner;
+public class ConnectFour 
+{
+	
+	//The Main method sets up the empty board and switches the turns for the player.
+	//As the game is played the method checks for a full column and a winner for each turn.
+	//after a winner is found the game halts, displays the winner, and asks to play again.
 	public static void main(String[] args) 
 	{
-		//Initialize the scanner
-		Scanner input = new Scanner(System.in);
-	
-		//Initialize and declare the variable for the original integer  (inputDecimalInt)
-		//Prompt the user for their integer of choice assign the value to inputDecimalInt 
-		int inputDecimalInt = input.nextInt();
-	
-		//Initialize and declare the int remainder variables (need them because we dont want to change the user input)
-		//Initialize and declare the strings for the result conversions (16 digits/bit)
-		//The results have to be a strings to concatenate the digits together (string 0 + 1 = 01,... while int 0 + 1 = 1)
-		int binaryRemainder = inputDecimalInt;
-		int octalRemainder = inputDecimalInt;
-		int hexadecimalRemainder = inputDecimalInt;
-		
-		String binaryResult = "";
-		String octalResult = "";
-		String hexadecimalResult = "";
-		
-		//Tests to see if the remainder can be ran through to gain another one or zero
-		while (binaryRemainder > 0 )
+		//This do-while is the replay function that restarts the game if the user input at the end == 1
+		int replay = 1;
+		do
 		{
-			//Checks to see if there is a remainder if it is divided by two, then assigns a 1 or a 0 depending on the result
-			//Will concatenate numbers together in the correct order until the conversion factor is zero
-			if (binaryRemainder % 2 == 1)
-			{
-				binaryResult = 1 + binaryResult;
-			}
+			//Declared a scanner that will take the inputs of the user and proceed the printing.
+			Scanner input = new Scanner(System.in);
+			System.out.println("printing board:");
+			
+			//The turns variable is created to alternate the turns for each player, after each turn the result will either be a 1 or a 0
+			int turns = 1;
+			
+			//initialize and assign all variables, that will constantly check for valid inputs, winners, and draws.
+			boolean colFull = false;
+			char winStatus = (char)0;
+			boolean drawStatus = false;
+			
+			//initialize a 2D array which will define the dimensions of the board.
+			char[][] board = new char[6][7];
+			
+			//This do-while includes the entire turn system and continues until there is a Winner
+			do
+			{	
+				//Finds the turn and proceeds depending on which turn it is
+				if(turns % 2 == 1)
+				{
+					//Yellows turn prompts for a column which gets checked for validity
+					int column = -1;
+					char color = 'Y';
+					while (column > 6 || column < 0)
+					{
+						System.out.println("Yellow's turn: ");
+						printBoard(board);
+						column = input.nextInt();
+						if (column > 6 || column < 0)
+						{
+							System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
+						}
+					}
+					//Checks to see if the column is full based on the board and the column input
+					colFull = columnIsFull(board, column);
+					if (colFull == true)
+					{
+						System.out.println(column);
+						System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
+					}
+					//if it is a valid input the game will proceed to drop the disk	and increment turns
+					else
+					{
+						dropDisk(board, column, color);
+						turns++;
+					}
+				}
+			
+				//Red's turn because the "turns" variable % 2 resulted in 0
+				//The code is the same as the yellow turn code
 				else
 				{
-					binaryResult = 0 + binaryResult;
+					int column = -1;
+					char color = 'R';
+					while (column > 6 || column < 0)
+					{
+						System.out.println("Red's turn: ");
+						printBoard(board);
+						column = input.nextInt();
+						if (column > 6 || column < 0)
+						{
+							System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
+						}
+					
+					}
+					colFull = columnIsFull(board, column);
+					if (colFull == true)
+					{
+						System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
+					}
+					else
+					{
+						dropDisk(board, column, color);
+						turns++;
+					}				
 				}
-				binaryRemainder = binaryRemainder / 2;
-		}
-				//Extends the length of the result to 16 bits
-				while (binaryResult.length() < 16)
-				{
-					binaryResult = 0 + binaryResult;
-				}
-				//Provide a similar method for octal and hexadecimal numbers
-				
-		//Octal Conversion Code
-		//Initializes and declares a variable to hold the value that gets divided by 8 multiple times		
-		int octalDivisor = octalRemainder;		
 		
-		//While the divisor is above zero it will mod the int, concatenate the result of the remainder, 
-		//and find the remainder that is going to get divided by 8 next
-		while (octalDivisor > 0)
-		{
-			octalRemainder = octalDivisor % 8;
-			octalResult = octalRemainder + octalResult;
-			octalDivisor = octalDivisor / 8;
-		}
-		//Add additional placement zeros if the octal number doesn't fill 16 bits worth
-		while (octalResult.length() < 6)
-		{
-			octalResult = 0 + octalResult;
-		}
+				//After each turn check to see if there is a winner or draw and if there isn't the loop repeats
+				//The variables are getting assigned depending on the outcome and checked to see if the game needs to exit
+				winStatus = isWinner(board);
+				drawStatus = isDraw(board);
+			}while((winStatus == (char)0) && drawStatus == false);
 			
-		//Hexadecimal Conversion Code (Same as the Octal Conversion but modulus of 16)
-		//Initialize a variable to hold the value that gets divided by 16 multiple times 
-		int hexDivisor = hexadecimalRemainder;
+			//I can print the last board and run the outputs to the user to find the users replay output
+			printBoard(board);
+			if (winStatus == 'R' || winStatus == 'Y')
+			{
+				
+				System.out.print(winStatus + " has WON the game! Do you want to play again?\n");
+				System.out.println("Yes: Enter 1");
+				System.out.println("No: Enter 0");
+				replay = input.nextInt();
+			}
+			else if (drawStatus == true)
+			{
+				System.out.print("There is a draw would you like to play Again?\n");
+				System.out.println("Yes: Enter 1");
+				System.out.println("No: Enter 0");
+				replay = input.nextInt();
+			}
+		
+		}while(replay == 1);
+		
+		if (replay == 0)
+		{
+			System.exit(0);
+		}
+	}
 	
-		while (hexDivisor > 0)
+	//Method that displays the board
+	private static void printBoard(char[][] board)
+	{
+		for(int i = board.length - 1; i >= 0; i--)
 		{
-			hexadecimalRemainder = hexDivisor % 16;
-			
-			//check to see if the remainder is over the value 9, hexadecimal places the ints 10-15 in the values A-F
-			if (hexadecimalRemainder > 9)
+			System.out.print("| ");
+			for(int j = 0; j < board[i].length; j++)
 			{
-				//initialize a string variable so that I can concatenate letters to the result instead of numbers
-				String hexaLetter = "";
-				//Create a switch case that evaluates all possible remainders under 16 and assigns a letter to the variable
-				switch(hexadecimalRemainder)
+				System.out.print(board[i][j] + " | ");
+			}
+			System.out.println();
+		}
+	}
+	
+	//Method used to drop each disk
+	//This will check each row from bottom to top to see if the space is open or taken
+	//then it will assign the appropriate color to the spot the user has chose
+	//!!NOTE!! '\0' is equivalent to a blank space
+	public static boolean dropDisk(char[][] board, int column, char color)
+	{
+		if (board[0][column] == '\0')
+		{
+			board[0][column] = color;
+			return true;
+		}
+		else if (board[1][column] == '\0')
+		{
+			board[1][column] = color;
+			return true;
+
+		}
+		else if (board[2][column] == '\0')
+		{
+			board[2][column] = color;
+			return true;
+		}
+		else if (board[3][column] == '\0')
+		{
+			board[3][column] = color;
+			return true;
+		}
+		else if (board[4][column] == '\0')
+		{
+			board[4][column] = color;
+			return true;
+		}
+		else if (board[5][column] == '\0')
+		{
+			board[5][column] = color;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	//Method used to check to see if there is a winner on the board
+	//It will check the entire board for a winner using methods that check all column elements, row elements, and diagonal elements
+	//If there is a winner, the method will return the char that won.
+	public static char isWinner(char[][] board)
+	{
+		char winner = (char)0;
+		winner = checkCol(board);
+		if (winner != ((char)0))
+		{
+			return winner;
+		}
+		else
+		{
+			winner = checkRow(board);
+			if (winner != ((char)0))
+			{
+				return winner;
+			}
+			else
+			{
+				winner = checkDiag(board);
+				if (winner != ((char)0))
 				{
-					case 10: hexaLetter = "A"; break;
-					case 11: hexaLetter = "B"; break;
-					case 12: hexaLetter = "C"; break;
-					case 13: hexaLetter = "D"; break;
-					case 14: hexaLetter = "E"; break;
-					case 15: hexaLetter = "F"; break;
+					return winner;
 				}
-				//This concatenates the letter to the result string and finds the new divisor
-				hexadecimalResult = hexaLetter + hexadecimalResult;
-				hexDivisor = hexDivisor / 16;
-			}
-			//While this concatenates the number that is already under the value of 9
-			else 
-			{
-				hexadecimalResult = hexadecimalRemainder + hexadecimalResult;
-				hexDivisor = hexDivisor / 16;
+				else
+				{
+					return (char)0;
+				}
 			}
 		}
-		//Add additional placement zeros if the octal number doesn't fill 16 bits worth
-		while (hexadecimalResult.length() < 4)
+	}	
+	
+	//Method is used to check to see if there is a draw, It only checks the very top row for characters
+	//if the top row is full of characters then all columns are full, and the game results in a draw
+	public static boolean isDraw(char[][] board)
+	{
+		if (board[5][0] != '\0' && board[5][1] != '\0' && board[5][2] != '\0' && board[5][3] 
+			!= '\0' && board[5][4] != '\0' && board[5][5] != '\0' && board[5][6] != '\0')
 		{
-			hexadecimalResult = 0 + hexadecimalResult;
+			return true;
 		}
-			
-		//Output the inputDecimalInt then \n is binary, \n Octal, \n Hexadecimal
-		System.out.println(inputDecimalInt + "\n" + binaryResult + "\n" + octalResult + "\n" + hexadecimalResult); 
+		return false;
+	}
+	
+	//Method used to check to see if the column is full or not
+	//NOTE board[5][column] checks the very top of the column and if it is a char or a blank space
+	//the column is declared as not full and returns false
+	public static boolean columnIsFull(char[][] board, int column)
+	{
+		if (board[5][column] != '\0')
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
+	//Checks the board for all of the columns (vertical win) and if 4 elements in a column equal each other consecutively
+	//the method returns the char that won and it is passed to the isWinner method above
+	//!!NOTE!! the for loops check the array length minus 3 to prevent checking outside of the array which results in a error
+	public static char checkCol(char[][] board)
+	{
+		for(int i = 0; i < board.length - 3; i++)
+		{
+			for(int j = 0; j < board[i].length; j++)
+			{
+				if ((board[i][j] != '\0') && board[i][j] == board[i+1][j] && 
+					board[i+1][j] == board[i+2][j] && board[i+2][j] == board[i+3][j])
+				{
+					return board[i][j];
+				}
+			}
+		}
+		return ((char)0);
+	}
+
+	//Checks the board for all of the rows (horizontal win) and if 4 elements in a row equal each other consecutively
+	//the method returns the char that won and it is passed to the isWinner method above
+	public static char checkRow(char[][] board)
+	{
+		for(int i = 0; i < board.length; i++)
+		{
+			for(int j = 0; j < board[i].length - 3; j++)
+			{
+				if ((board[i][j] != '\0') && board[i][j] == board[i][j+1] && 
+					board[i][j+1] == board[i][j+2] && board[i][j+2] == board[i][j+3])
+				{
+					return board[i][j];
+				}
+			}
+		}
+		return ((char)0);
+	}
+	
+	//Checks the board for all of the diagonals (diagonal win) and if 4 elements in a diagonal equal each other consecutively
+	//the method returns the char that won and it is passed to the isWinner method above
+	public static char checkDiag(char[][] board)
+	{
+		for(int i = 0; i < board.length - 3; i++)
+		{
+			for(int j = 0; j < board[i].length - 3; j++)
+			{
+				if ((board[i][j] != '\0') && board[i][j] == board[i+1][j+1] && 
+					board[i+1][j+1] == board[i+2][j+2] && board[i+2][j+2] == board[i+3][j+3])
+				{
+					return board[i][j];
+				}
+			}
+		}	
+		return ((char)0);
+	}
 }
