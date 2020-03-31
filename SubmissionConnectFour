@@ -28,11 +28,12 @@ public class ConnectFour
 	{
 		//This do-while is the replay function that restarts the game if the user input at the end == 1
 		int replay = 1;
-		do
+		
+		//Declared a scanner that will take the inputs of the user (has to remain open so keep outside of the while loop)
+		Scanner input = new Scanner(System.in);
+		
+		while (replay == 1)
 		{
-			//Declared a scanner that will take the inputs of the user
-			Scanner input = new Scanner(System.in);
-			
 			//The turns variable is created to alternate the turns for each player, after each turn the result will either be a 1 or a 0
 			int turns = 1;
 			
@@ -126,7 +127,7 @@ public class ConnectFour
 				replay = input.nextInt();
 			}
 		
-		}while(replay == 1);
+		}
 		
 		if (replay == 0)
 		{
@@ -211,14 +212,22 @@ public class ConnectFour
 			}
 			else
 			{
-				winner = checkDiag(board);
+				winner = checkDiagUp(board);
 				if (winner != ((char)0))
 				{
 					return winner;
 				}
 				else
 				{
-					return (char)0;
+					winner = checkDiagDown(board);
+					if (winner != ((char)0))
+					{
+						return winner;
+					}
+					else 
+					{
+						return (char)0;
+					}
 				}
 			}
 		}
@@ -288,9 +297,9 @@ public class ConnectFour
 		return ((char)0);
 	}
 	
-	//Checks the board for all of the diagonals (diagonal win) and if 4 elements in a diagonal equal each other consecutively
+	//Checks the board for all of the diagonals in the positive slope (diagonal win) and if 4 elements in a diagonal equal each other consecutively
 	//the method returns the char that won and it is passed to the isWinner method above
-	public static char checkDiag(char[][] board)
+	public static char checkDiagUp(char[][] board)
 	{
 		for(int i = 0; i < board.length - 3; i++)
 		{
@@ -298,6 +307,24 @@ public class ConnectFour
 			{
 				if ((board[i][j] != '\0') && board[i][j] == board[i+1][j+1] && 
 					board[i+1][j+1] == board[i+2][j+2] && board[i+2][j+2] == board[i+3][j+3])
+				{
+					return board[i][j];
+				}
+			}
+		}	
+		return ((char)0);
+	}
+	
+	//Checks the board for all of the diagonals in the negative slope (diagonal win) and if 4 elements in a diagonal equal each other consecutively
+	//the method returns the char that won and it is passed to the isWinner method above
+	public static char checkDiagDown(char[][] board)
+	{
+		for(int i = 0; i < board.length - 3; i++)
+		{
+			for(int j = 3; j < board[i].length; j++)
+			{
+				if ((board[i][j] != '\0') && board[i][j] == board[i+1][j-1] && 
+					board[i+1][j-1] == board[i+2][j-2] && board[i+2][j-2] == board[i+3][j-3])
 				{
 					return board[i][j];
 				}
