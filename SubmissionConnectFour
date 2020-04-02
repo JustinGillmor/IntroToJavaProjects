@@ -67,7 +67,6 @@ public class ConnectFour
 					colFull = columnIsFull(board, column);
 					if (colFull == true)
 					{
-						System.out.println(column);
 						System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
 					}
 					//if it is a valid input the game will proceed to drop the disk	and increment turns
