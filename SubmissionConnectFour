@@ -51,58 +51,62 @@ public class ConnectFour
 				//Finds the turn and proceeds depending on which turn it is
 				if(turns % 2 == 1)
 				{
-					//Yellows turn prompts for a column which gets checked for validity
+					//Yellows's turn prompts for a column which gets checked for validity
 					int column = -1;
 					char color = 'Y';
 					printBoard(board);
-					while (column > 6 || column < 0)
+					colFull = true;
+					//Prerequisite to keep a open scanner if input is incorrect 
+					while ((column > 6 || column < 0) || (colFull == true))
 					{
 						column = input.nextInt();
-						if (column > 6 || column < 0)
+						//Without this if-statement a index-out-of-bound error occurs
+						if (column <= 6 && column >= 0)
+						{
+							colFull = columnIsFull(board, column);
+						}
+						//Checks to see if the input is valid with the column status and the column input
+						if ((column > 6 || column < 0) || (colFull == true))
 						{
 							System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
 						}
-					}
-					//Checks to see if the column is full based on the board and the column input
-					colFull = columnIsFull(board, column);
-					if (colFull == true)
-					{
-						System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
-					}
-					//if it is a valid input the game will proceed to drop the disk	and increment turns
-					else
-					{
-						dropDisk(board, column, color);
-						turns++;
-					}
+						//if it is a valid input the game will proceed to drop the disk	and increment turns
+						else
+						{
+							dropDisk(board, column, color);
+							turns++;
+						}
+					}		
 				}
-			
+				
 				//Red's turn because the "turns" variable % 2 resulted in 0
 				//The code is the same as the yellow turn code
 				else
 				{
+					//Red's turn prompts for a column which gets checked for validity
 					int column = -1;
 					char color = 'R';
 					printBoard(board);
-					while (column > 6 || column < 0)
+					colFull = true;
+					while ((column > 6 || column < 0) || (colFull == true))
 					{
 						column = input.nextInt();
-						if (column > 6 || column < 0)
+						if (column <= 6 && column >= 0)
+						{
+							colFull = columnIsFull(board, column);
+						}
+						//Checks to see if the input is valid with the column status and the column input
+						if ((column > 6 || column < 0) || (colFull == true))
 						{
 							System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
 						}
-					
-					}
-					colFull = columnIsFull(board, column);
-					if (colFull == true)
-					{
-						System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
-					}
-					else
-					{
-						dropDisk(board, column, color);
-						turns++;
-					}				
+						//if it is a valid input the game will proceed to drop the disk	and increment turns
+						else
+						{
+							dropDisk(board, column, color);
+							turns++;
+						}
+					}		
 				}
 		
 				//After each turn check to see if there is a winner or draw and if there isn't the loop repeats
