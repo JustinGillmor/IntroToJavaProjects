@@ -68,7 +68,7 @@ public class ConnectFour
 						//Checks to see if the input is valid with the column status and the column input
 						if ((column > 6 || column < 0) || (colFull == true))
 						{
-							System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
+							System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL.");
 						}
 						//if it is a valid input the game will proceed to drop the disk	and increment turns
 						else
@@ -98,7 +98,7 @@ public class ConnectFour
 						//Checks to see if the input is valid with the column status and the column input
 						if ((column > 6 || column < 0) || (colFull == true))
 						{
-							System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
+							System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL.");
 						}
 						//if it is a valid input the game will proceed to drop the disk	and increment turns
 						else
