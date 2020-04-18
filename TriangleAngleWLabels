@@ -1,3 +1,13 @@
+/*  
+ * <TriangleAngles.java>  
+ * This program allows for the user to click and drag any of the vertices indicated by the black dots
+ * as a result, the angles of the triangle will update real-time and display the angle values next to the vertex
+ * 
+ * Author: Justin Gillmor   
+ * Class: EECS 1510  
+ * Prof: Dr. Joseph Hobbs  
+ *  
+ */  
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -7,20 +17,22 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.*;
 
-public class Main extends Application 
+public class TriangleAngles extends Application 
 {
 	
 	//Creates the circles and places them inside the pane and makes their color black
+	//Need to import the javafx files for this to work
 	Circle circleOne = new Circle(350, 350, 15, Color.BLACK);
 	Circle circleTwo = new Circle(150, 350, 15, Color.BLACK);
 	Circle circleThree = new Circle(250, 150, 15, Color.BLACK);
 	
 	//Creates the lines and automatically attaches them to each of the Circles
+	//Need to import the javafx files for this to work
 	Line line_a = new Line(circleOne.getCenterX(), circleOne.getCenterY(), circleTwo.getCenterX(), circleTwo.getCenterY()); 
 	Line line_b = new Line(circleTwo.getCenterX(), circleTwo.getCenterY(), circleThree.getCenterX(), circleThree.getCenterY());
 	Line line_c = new Line(circleThree.getCenterX(), circleThree.getCenterY(), circleOne.getCenterX(), circleOne.getCenterY());
 
-	//Distance formula for each of the lines
+	//Distance formula for each of the lines (could use point2D, but I used the Math class to implement the formula)
 	double distanceLineA = Math.sqrt(Math.pow((line_a.getEndX()-line_a.getStartX()),2) + Math.pow((line_a.getEndY()-line_a.getStartY()),2));
 	double distanceLineB = Math.sqrt(Math.pow((line_b.getEndX()-line_b.getStartX()),2) + Math.pow((line_b.getEndY()-line_b.getStartY()),2));
 	double distanceLineC = Math.sqrt(Math.pow((line_c.getEndX()-line_c.getStartX()),2) + Math.pow((line_c.getEndY()-line_c.getStartY()),2));
@@ -30,17 +42,18 @@ public class Main extends Application
 	double angleOne = Math.toDegrees(Math.acos((distanceLineB * distanceLineB - distanceLineA * distanceLineA - distanceLineC * distanceLineC) / (-2 * distanceLineA * distanceLineC)));
 	double angleTwo = Math.toDegrees(Math.acos((distanceLineC * distanceLineC - distanceLineB * distanceLineB - distanceLineA * distanceLineA) / (-2 * distanceLineA * distanceLineB)));
 	
-	
+	//These variables with change the long decimal results to a double with only 2 decimal places
 	double roundedAngleThree = Math.round(angleThree * 100.0) / 100.0;
 	double roundedAngleOne = Math.round(angleOne * 100.0) / 100.0;
 	double roundedAngleTwo = Math.round(angleTwo * 100.0) / 100.0;
 	
-	//The text that the angles will get placed into
+	//The text that the angles will get placed above the vertices, add the blank string to make the input a concatenation
+	//Need to import the javafx file for this to work
 	Text textAngleOne = new Text(roundedAngleOne + "°");
 	Text textAngleTwo = new Text(roundedAngleTwo + "°");
 	Text textAngleThree = new Text(roundedAngleThree + "°");
 	
-	//This is an extra text that labels the three circles and lines
+	//Labels for the circles and the lines
 	Text circleOneLabel = new Text("1");
 	Text circleTwoLabel = new Text("2");
 	Text circleThreeLabel = new Text("3");
@@ -52,8 +65,7 @@ public class Main extends Application
 	@Override
 	public void start(Stage primaryStage) 
 	{
-		
-		//Sets all of the placements and fill colors of the texts
+		//Sets all of the placements and fill colors of the texts for the circles and the lines
 		textAngleOne.setFill(Color.BLACK);
 		textAngleOne.setX(circleOne.getCenterX() + 15);
 		textAngleOne.setY(circleOne.getCenterY() + 15);
@@ -92,9 +104,12 @@ public class Main extends Application
 		
 		lineCLabel.setX((line_c.getStartX() + line_c.getEndX())/2);
 		lineCLabel.setY((line_c.getStartY() + line_c.getEndY())/2);
+		
 		//Places the nodes into the pane, the pane into the scene, the scene into the stage
 		Pane pane = new Pane();
-	    pane.getChildren().addAll(circleOne, circleTwo, circleThree, line_a, line_b, line_c, textAngleOne, textAngleTwo, textAngleThree, circleOneLabel, circleTwoLabel, circleThreeLabel, lineALabel, lineBLabel, lineCLabel);
+	    pane.getChildren().addAll(circleOne, circleTwo, circleThree, line_a, line_b, line_c, textAngleOne, 
+	    						  textAngleTwo, textAngleThree, circleOneLabel, circleTwoLabel, circleThreeLabel, 
+	    						  lineALabel, lineBLabel, lineCLabel);
 	    Scene scene = new Scene(pane, 500, 500);
 	    primaryStage.setTitle("Triangle Angles");
 	    primaryStage.setScene(scene);
@@ -104,11 +119,11 @@ public class Main extends Application
 	    //This checks for a dragging event
 	    circleOne.setOnMouseDragged(e -> 
 	    {
-		   //Moves the circle
+		   //Moves the circle based on the mouse location
 	       circleOne.setCenterX(e.getX());
 		   circleOne.setCenterY(e.getY());
 		   
-		   //Moves the Lines touching the circle
+		   //Moves the Lines touching the circle that is moving
 		   line_a.setStartX(circleOne.getCenterX());
 		   line_a.setStartY(circleOne.getCenterY());
 		   line_a.setEndX(circleTwo.getCenterX());
@@ -118,6 +133,88 @@ public class Main extends Application
 		   line_c.setEndX(circleOne.getCenterX());
 		   line_c.setEndY(circleOne.getCenterY());
 		   
+		   //Update method for updating all of the values while circles and lines move
+		   update();
+
+		   //Moves the text with the vertices
+		   textAngleOne.setX(circleOne.getCenterX()+15);
+		   textAngleOne.setY(circleOne.getCenterY()+15);
+		   
+		   //Moves the circle's labels
+		   circleOneLabel.setX(circleOne.getCenterX()-4);
+		   circleOneLabel.setY(circleOne.getCenterY()+4);
+		   
+		   //Moves the Line labels
+		   lineALabel.setX((line_a.getStartX() + line_a.getEndX())/2);
+		   lineALabel.setY((line_a.getStartY() + line_a.getEndY())/2);
+
+		   lineCLabel.setX((line_c.getStartX() + line_c.getEndX())/2);
+		   lineCLabel.setY((line_c.getStartY() + line_c.getEndY())/2);
+	    });
+	   
+	   //This is basically the same exact code as above but for a circleTwo
+	   circleTwo.setOnMouseDragged(e -> 
+	   {
+		   circleTwo.setCenterX(e.getX());
+		   circleTwo.setCenterY(e.getY());
+		   line_b.setStartX(circleTwo.getCenterX());
+		   line_b.setStartY(circleTwo.getCenterY());
+		   line_b.setEndX(circleThree.getCenterX());
+		   line_b.setEndY(circleThree.getCenterY());
+		   line_a.setStartX(circleOne.getCenterX());
+		   line_a.setStartY(circleOne.getCenterY());
+		   line_a.setEndX(circleTwo.getCenterX());
+		   line_a.setEndY(circleTwo.getCenterY());
+	   
+		   update();
+	   
+		   textAngleTwo.setX(circleTwo.getCenterX()+15);
+		   textAngleTwo.setY(circleTwo.getCenterY()+15);
+	   
+		   circleTwoLabel.setX(circleTwo.getCenterX()-4);
+		   circleTwoLabel.setY(circleTwo.getCenterY()+4);
+	   
+		   lineBLabel.setX((line_b.getStartX() + line_b.getEndX())/2);
+		   lineBLabel.setY((line_b.getStartY() + line_b.getEndY())/2);
+	   
+		   lineALabel.setX((line_a.getStartX() + line_a.getEndX())/2);
+		   lineALabel.setY((line_a.getStartY() + line_a.getEndY())/2);
+	   });
+	   
+	   //Same code but for circleThree
+	   circleThree.setOnMouseDragged(e -> 
+	   {
+		   circleThree.setCenterX(e.getX());
+		   circleThree.setCenterY(e.getY());
+		   line_c.setStartX(circleThree.getCenterX());
+		   line_c.setStartY(circleThree.getCenterY());
+		   line_c.setEndX(circleOne.getCenterX());
+		   line_c.setEndY(circleOne.getCenterY());
+		   line_b.setStartX(circleTwo.getCenterX());
+		   line_b.setStartY(circleTwo.getCenterY());
+		   line_b.setEndX(circleThree.getCenterX());
+		   line_b.setEndY(circleThree.getCenterY());
+	   
+		   update();
+	   
+		   textAngleThree.setX(circleThree.getCenterX()+15);
+		   textAngleThree.setY(circleThree.getCenterY()+15);
+	   
+		   circleThreeLabel.setX(circleThree.getCenterX()-4);
+		   circleThreeLabel.setY(circleThree.getCenterY()+4);
+	   
+		   lineCLabel.setX((line_c.getStartX() + line_c.getEndX())/2);
+		   lineCLabel.setY((line_c.getStartY() + line_c.getEndY())/2);
+	   
+		   lineBLabel.setX((line_b.getStartX() + line_b.getEndX())/2);
+		   lineBLabel.setY((line_b.getStartY() + line_b.getEndY())/2);
+	   });
+	}
+	
+	//This method takes all of the values of lines and calculates the angles and updates the texts
+	//every circle has this method
+	public void update()
+	{
 		   //Recalculates the distances
 		   distanceLineA = Math.sqrt(Math.pow((line_a.getEndX()-line_a.getStartX()),2) + Math.pow((line_a.getEndY()-line_a.getStartY()),2));
 		   distanceLineB = Math.sqrt(Math.pow((line_b.getEndX()-line_b.getStartX()),2) + Math.pow((line_b.getEndY()-line_b.getStartY()),2));
@@ -136,112 +233,9 @@ public class Main extends Application
 		   textAngleOne.setText(roundedAngleOne + "°");
 		   textAngleTwo.setText(roundedAngleTwo + "°");
 		   textAngleThree.setText(roundedAngleThree + "°");
-
-		   //Moves the text with the vertices
-		   textAngleOne.setX(circleOne.getCenterX()+15);
-		   textAngleOne.setY(circleOne.getCenterY()+15);
-		   
-		   //Moves the circle's labels
-		   circleOneLabel.setX(circleOne.getCenterX()-4);
-		   circleOneLabel.setY(circleOne.getCenterY()+4);
-		   
-		   //Moves the Line labels
-		   lineALabel.setX((line_a.getStartX() + line_a.getEndX())/2);
-		   lineALabel.setY((line_a.getStartY() + line_a.getEndY())/2);
-
-		   lineCLabel.setX((line_c.getStartX() + line_c.getEndX())/2);
-		   lineCLabel.setY((line_c.getStartY() + line_c.getEndY())/2);
-	    });
-	   
-	   circleTwo.setOnMouseDragged(e -> 
-	   {
-		   circleTwo.setCenterX(e.getX());
-		   circleTwo.setCenterY(e.getY());
-		   line_b.setStartX(circleTwo.getCenterX());
-		   line_b.setStartY(circleTwo.getCenterY());
-		   line_b.setEndX(circleThree.getCenterX());
-		   line_b.setEndY(circleThree.getCenterY());
-		   line_a.setStartX(circleOne.getCenterX());
-		   line_a.setStartY(circleOne.getCenterY());
-		   line_a.setEndX(circleTwo.getCenterX());
-		   line_a.setEndY(circleTwo.getCenterY());
-	   
-		   distanceLineA = Math.sqrt(Math.pow((line_a.getEndX()-line_a.getStartX()),2) + Math.pow((line_a.getEndY()-line_a.getStartY()),2));
-		   distanceLineB = Math.sqrt(Math.pow((line_b.getEndX()-line_b.getStartX()),2) + Math.pow((line_b.getEndY()-line_b.getStartY()),2));
-		   distanceLineC = Math.sqrt(Math.pow((line_c.getEndX()-line_c.getStartX()),2) + Math.pow((line_c.getEndY()-line_c.getStartY()),2));
-		  
-		   angleThree = Math.toDegrees(Math.acos((distanceLineA * distanceLineA - distanceLineB * distanceLineB - distanceLineC * distanceLineC) / (-2 * distanceLineB * distanceLineC)));
-		   angleOne = Math.toDegrees(Math.acos((distanceLineB * distanceLineB - distanceLineA * distanceLineA - distanceLineC * distanceLineC) / (-2 * distanceLineA * distanceLineC)));
-		   angleTwo = Math.toDegrees(Math.acos((distanceLineC * distanceLineC - distanceLineB * distanceLineB - distanceLineA * distanceLineA) / (-2 * distanceLineA * distanceLineB)));
-		   
-		   roundedAngleThree = Math.round(angleThree * 100.0) / 100.0;
-		   roundedAngleOne = Math.round(angleOne * 100.0) / 100.0;
-		   roundedAngleTwo = Math.round(angleTwo * 100.0) / 100.0;
-		   
-		   //Changes the text to the new calculated angles
-		   textAngleOne.setText(roundedAngleOne + "°");
-		   textAngleTwo.setText(roundedAngleTwo + "°");
-		   textAngleThree.setText(roundedAngleThree + "°");
-	   
-		   textAngleTwo.setX(circleTwo.getCenterX()+15);
-		   textAngleTwo.setY(circleTwo.getCenterY()+15);
-	   
-		   circleTwoLabel.setX(circleTwo.getCenterX()-4);
-		   circleTwoLabel.setY(circleTwo.getCenterY()+4);
-	   
-		   lineBLabel.setX((line_b.getStartX() + line_b.getEndX())/2);
-		   lineBLabel.setY((line_b.getStartY() + line_b.getEndY())/2);
-	   
-		   lineALabel.setX((line_a.getStartX() + line_a.getEndX())/2);
-		   lineALabel.setY((line_a.getStartY() + line_a.getEndY())/2);
-	   });
-	   
-	   circleThree.setOnMouseDragged(e -> 
-	   {
-		   circleThree.setCenterX(e.getX());
-		   circleThree.setCenterY(e.getY());
-		   line_c.setStartX(circleThree.getCenterX());
-		   line_c.setStartY(circleThree.getCenterY());
-		   line_c.setEndX(circleOne.getCenterX());
-		   line_c.setEndY(circleOne.getCenterY());
-		   line_b.setStartX(circleTwo.getCenterX());
-		   line_b.setStartY(circleTwo.getCenterY());
-		   line_b.setEndX(circleThree.getCenterX());
-		   line_b.setEndY(circleThree.getCenterY());
-	   
-		   distanceLineA = Math.sqrt(Math.pow((line_a.getEndX()-line_a.getStartX()),2) + Math.pow((line_a.getEndY()-line_a.getStartY()),2));
-		   distanceLineB = Math.sqrt(Math.pow((line_b.getEndX()-line_b.getStartX()),2) + Math.pow((line_b.getEndY()-line_b.getStartY()),2));
-		   distanceLineC = Math.sqrt(Math.pow((line_c.getEndX()-line_c.getStartX()),2) + Math.pow((line_c.getEndY()-line_c.getStartY()),2));
-		  
-		   angleThree = Math.toDegrees(Math.acos((distanceLineA * distanceLineA - distanceLineB * distanceLineB - distanceLineC * distanceLineC) / (-2 * distanceLineB * distanceLineC)));
-		   angleOne = Math.toDegrees(Math.acos((distanceLineB * distanceLineB - distanceLineA * distanceLineA - distanceLineC * distanceLineC) / (-2 * distanceLineA * distanceLineC)));
-		   angleTwo = Math.toDegrees(Math.acos((distanceLineC * distanceLineC - distanceLineB * distanceLineB - distanceLineA * distanceLineA) / (-2 * distanceLineA * distanceLineB)));
-		   
-		   roundedAngleThree = Math.round(angleThree * 100.0) / 100.0;
-		   roundedAngleOne = Math.round(angleOne * 100.0) / 100.0;
-		   roundedAngleTwo = Math.round(angleTwo * 100.0) / 100.0;
-		   
-		   //Changes the text to the new calculated angles
-		   textAngleOne.setText(roundedAngleOne + "°");
-		   textAngleTwo.setText(roundedAngleTwo + "°");
-		   textAngleThree.setText(roundedAngleThree + "°");
-	   
-		   textAngleThree.setX(circleThree.getCenterX()+15);
-		   textAngleThree.setY(circleThree.getCenterY()+15);
-	   
-		   circleThreeLabel.setX(circleThree.getCenterX()-4);
-		   circleThreeLabel.setY(circleThree.getCenterY()+4);
-	   
-		   lineCLabel.setX((line_c.getStartX() + line_c.getEndX())/2);
-		   lineCLabel.setY((line_c.getStartY() + line_c.getEndY())/2);
-	   
-		   lineBLabel.setX((line_b.getStartX() + line_b.getEndX())/2);
-		   lineBLabel.setY((line_b.getStartY() + line_b.getEndY())/2);
-	   });
 	}
 	
-	//Method for line distance,  angle calculation, showing rounded double... etc
-	
+	//launches the application
 	public static void main(String[] args) 
 	{
 	    launch(args);
