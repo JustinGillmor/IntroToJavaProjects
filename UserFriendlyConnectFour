@@ -1,5 +1,6 @@
 /*  
  * <ConnectFour.java>  
+
  * 
  * Game Instructions:
  * The program emulates the game called Connect Four and it is played on a 6 row x 7 column board.
@@ -16,11 +17,10 @@
  * Prof: Dr. Joseph Hobbs  
  *  
  */  
-
 import java.util.Scanner;
 public class ConnectFour 
 {
-	
+	//Read documentation above ^^ (It might be minimized click the + left of line 2)
 	//The Main method sets up the empty board and switches the turns for the player.
 	//As the game is played the method checks for a full column and a winner for each turn.
 	//after a winner is found the game halts, displays the winner, and asks to play again.
@@ -28,12 +28,25 @@ public class ConnectFour
 	{
 		//This do-while is the replay function that restarts the game if the user input at the end == 1
 		int replay = 1;
-		do
+		
+		//Declared a scanner that will take the inputs of the user (has to remain open so keep outside of the while loop)
+		Scanner input = new Scanner(System.in);
+		
+		System.out.println(" _____                             _    ______               \r\n" + 
+				"/  __ \\                           | |   |  ___|              \r\n" + 
+				"| /  \\/ ___  _ __  _ __   ___  ___| |_  | |_ ___  _   _ _ __ \r\n" + 
+				"| |    / _ \\| '_ \\| '_ \\ / _ \\/ __| __| |  _/ _ \\| | | | '__|\r\n" + 
+				"| \\__/\\ (_) | | | | | | |  __/ (__| |_  | || (_) | |_| | |   \r\n" + 
+				" \\____/\\___/|_| |_|_| |_|\\___|\\___|\\__| \\_| \\___/ \\__,_|_|   \r\n" + 
+				"                                                             \r\n" + 
+				"                                                             ");
+		
+		System.out.println("Printing New Board...");
+		System.out.println("*NOTE* use the values 0 through 6 to pick your column");
+		System.out.println("       0 is the value for column all the way to the left");
+		
+		while (replay == 1)
 		{
-			//Declared a scanner that will take the inputs of the user and proceed the printing.
-			Scanner input = new Scanner(System.in);
-			System.out.println("printing board:");
-			
 			//The turns variable is created to alternate the turns for each player, after each turn the result will either be a 1 or a 0
 			int turns = 1;
 			
@@ -51,61 +64,64 @@ public class ConnectFour
 				//Finds the turn and proceeds depending on which turn it is
 				if(turns % 2 == 1)
 				{
-					//Yellows turn prompts for a column which gets checked for validity
+					//Yellows's turn prompts for a column which gets checked for validity
 					int column = -1;
 					char color = 'Y';
-					while (column > 6 || column < 0)
+					System.out.println("        Yellow's Turn");
+					printBoard(board);
+					colFull = true;
+					//Prerequisite to keep a open scanner if input is incorrect 
+					while ((column > 6 || column < 0) || (colFull == true))
 					{
-						System.out.println("Yellow's turn: ");
-						printBoard(board);
 						column = input.nextInt();
-						if (column > 6 || column < 0)
+						//Without this if-statement a index-out-of-bound error occurs
+						if (column <= 6 && column >= 0)
 						{
-							System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
+							colFull = columnIsFull(board, column);
 						}
-					}
-					//Checks to see if the column is full based on the board and the column input
-					colFull = columnIsFull(board, column);
-					if (colFull == true)
-					{
-						System.out.println(column);
-						System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
-					}
-					//if it is a valid input the game will proceed to drop the disk	and increment turns
-					else
-					{
-						dropDisk(board, column, color);
-						turns++;
-					}
+						//Checks to see if the input is valid with the column status and the column input
+						if ((column > 6 || column < 0) || (colFull == true))
+						{
+							System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL.");
+						}
+						//if it is a valid input the game will proceed to drop the disk	and increment turns
+						else
+						{
+							dropDisk(board, column, color);
+							turns++;
+						}
+					}		
 				}
-			
+				
 				//Red's turn because the "turns" variable % 2 resulted in 0
 				//The code is the same as the yellow turn code
 				else
 				{
+					//Red's turn prompts for a column which gets checked for validity
 					int column = -1;
 					char color = 'R';
-					while (column > 6 || column < 0)
+					System.out.println("          Red's Turn");
+					printBoard(board);
+					colFull = true;
+					while ((column > 6 || column < 0) || (colFull == true))
 					{
-						System.out.println("Red's turn: ");
-						printBoard(board);
 						column = input.nextInt();
-						if (column > 6 || column < 0)
+						if (column <= 6 && column >= 0)
 						{
-							System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
+							colFull = columnIsFull(board, column);
 						}
-					
-					}
-					colFull = columnIsFull(board, column);
-					if (colFull == true)
-					{
-						System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL");
-					}
-					else
-					{
-						dropDisk(board, column, color);
-						turns++;
-					}				
+						//Checks to see if the input is valid with the column status and the column input
+						if ((column > 6 || column < 0) || (colFull == true))
+						{
+							System.out.println("YOU ENTERED AN INVALID INTEGER OR THE COLUMN IS FULL.");
+						}
+						//if it is a valid input the game will proceed to drop the disk	and increment turns
+						else
+						{
+							dropDisk(board, column, color);
+							turns++;
+						}
+					}		
 				}
 		
 				//After each turn check to see if there is a winner or draw and if there isn't the loop repeats
@@ -118,21 +134,23 @@ public class ConnectFour
 			printBoard(board);
 			if (winStatus == 'R' || winStatus == 'Y')
 			{
-				
-				System.out.print(winStatus + " has WON the game! Do you want to play again?\n");
-				System.out.println("Yes: Enter 1");
-				System.out.println("No: Enter 0");
+				System.out.println(winStatus + " has WON the game!");
+				System.out.println("Would you like to play another game?");
+				System.out.println("Yes: type 1");
+				System.out.println("No: type 0");
 				replay = input.nextInt();
 			}
 			else if (drawStatus == true)
 			{
-				System.out.print("There is a draw would you like to play Again?\n");
-				System.out.println("Yes: Enter 1");
-				System.out.println("No: Enter 0");
+				System.out.println("There is a draw");
+				System.out.println("Would you like to play another game?");
+				System.out.println("Yes: type 1");
+				System.out.println("No: type 0");
+
 				replay = input.nextInt();
 			}
 		
-		}while(replay == 1);
+		}
 		
 		if (replay == 0)
 		{
@@ -217,14 +235,22 @@ public class ConnectFour
 			}
 			else
 			{
-				winner = checkDiag(board);
+				winner = checkDiagUp(board);
 				if (winner != ((char)0))
 				{
 					return winner;
 				}
 				else
 				{
-					return (char)0;
+					winner = checkDiagDown(board);
+					if (winner != ((char)0))
+					{
+						return winner;
+					}
+					else 
+					{
+						return (char)0;
+					}
 				}
 			}
 		}
@@ -294,9 +320,9 @@ public class ConnectFour
 		return ((char)0);
 	}
 	
-	//Checks the board for all of the diagonals (diagonal win) and if 4 elements in a diagonal equal each other consecutively
+	//Checks the board for all of the diagonals in the positive slope (diagonal win) and if 4 elements in a diagonal equal each other consecutively
 	//the method returns the char that won and it is passed to the isWinner method above
-	public static char checkDiag(char[][] board)
+	public static char checkDiagUp(char[][] board)
 	{
 		for(int i = 0; i < board.length - 3; i++)
 		{
@@ -304,6 +330,24 @@ public class ConnectFour
 			{
 				if ((board[i][j] != '\0') && board[i][j] == board[i+1][j+1] && 
 					board[i+1][j+1] == board[i+2][j+2] && board[i+2][j+2] == board[i+3][j+3])
+				{
+					return board[i][j];
+				}
+			}
+		}	
+		return ((char)0);
+	}
+	
+	//Checks the board for all of the diagonals in the negative slope (diagonal win) and if 4 elements in a diagonal equal each other consecutively
+	//the method returns the char that won and it is passed to the isWinner method above
+	public static char checkDiagDown(char[][] board)
+	{
+		for(int i = 0; i < board.length - 3; i++)
+		{
+			for(int j = 3; j < board[i].length; j++)
+			{
+				if ((board[i][j] != '\0') && board[i][j] == board[i+1][j-1] && 
+					board[i+1][j-1] == board[i+2][j-2] && board[i+2][j-2] == board[i+3][j-3])
 				{
 					return board[i][j];
 				}
